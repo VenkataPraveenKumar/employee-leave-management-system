@@ -44,6 +44,13 @@ ScaffoldingReadMe.txt
 *~
 CodeCoverage/
 
+# Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
 # MSBuild Binary and Structured Log
 *.binlog
 
