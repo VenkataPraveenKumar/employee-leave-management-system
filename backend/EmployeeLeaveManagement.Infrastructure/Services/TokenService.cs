@@ -17,6 +17,12 @@ public class TokenService : ITokenService
         _config = config;
     }
 
+    /*
+     * Generates a JWT token for the given user.
+     *
+     * @param user The user for whom the token is generated.
+     * @return A JWT token as a string.
+     */
     public string GenerateToken(User user)
     {
         var jwtSettings = _config.GetSection("JwtSettings");

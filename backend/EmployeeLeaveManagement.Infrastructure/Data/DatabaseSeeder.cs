@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using EmployeeLeaveManagement.Core.Entities;
+﻿using EmployeeLeaveManagement.Core.Entities;
 using EmployeeLeaveManagement.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 

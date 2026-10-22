@@ -6,13 +6,58 @@ using EmployeeLeaveManagement.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
+using Microsoft.OpenApi.Models;
+using EmployeeLeaveManagement.Core.Validators;
+using EmployeeLeaveManagementSystem.API.Middleware;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers & OpenAPI
+// Controllers & Swagger
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateLeaveRequestValidator>();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Employee Leave Management System API",
+        Version = "v1",
+        Description = "API for managing employee leave requests and approvals"
+    });
+
+    // Add JWT Bearer authentication to Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter your JWT token in the text input below."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -22,7 +67,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Repositories & Unit of Work
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Services
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ILeaveService, LeaveService>();
 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -53,6 +101,9 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Global Exception Handler (Must be registered early to catch all downstream failures)
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 // Run migrations and seed data
 using (var scope = app.Services.CreateScope())
 {
@@ -69,11 +120,15 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Development OpenAPI & Scalar UI
+// Development Swagger UI
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Leave Management System API v1");
+        options.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    });
 }
 
 app.UseHttpsRedirection();
