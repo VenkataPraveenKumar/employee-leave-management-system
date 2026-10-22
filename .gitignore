@@ -62,3 +62,32 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+## Visual Studio & User-specific files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+## Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+TestResults/
+
+## Local secrets & connection strings
+appsettings.Development.json
+secrets.json
+
+## Node & Frontend (for when we build Angular)
+node_modules/
+dist/
+.angular/
+
+## OS generated files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
