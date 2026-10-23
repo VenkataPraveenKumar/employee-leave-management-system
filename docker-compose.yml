@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Database Service: SQL Server Express / Developer
+  elms-database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: elms-database
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password@Strong123
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - elms_db_data:/var/opt/mssql
+    networks:
+      - elms-network
+
+  # Backend Service: ASP.NET Core Web API
+  elms-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: elms-api
+    restart: always
+    depends_on:
+      - elms-database
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=elms-database;Database=ELMS_Db;User Id=sa;Password=Password@Strong123;TrustServerCertificate=True;
+      - Jwt__Issuer=ELMS_Backend
+      - Jwt__Audience=ELMS_Frontend
+      - Jwt__SecretKey=SuperSecretKeyForELMSLeaveManagementSystem2026!
+    ports:
+      - "5000:8080"
+    networks:
+      - elms-network
+
+  # Frontend Service: Angular UI with Nginx
+  elms-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: elms-frontend
+    restart: always
+    depends_on:
+      - elms-api
+    ports:
+      - "80:80"
+    networks:
+      - elms-network
+
+networks:
+  elms-network:
+    driver: bridge
+
+volumes:
+  elms_db_data:
