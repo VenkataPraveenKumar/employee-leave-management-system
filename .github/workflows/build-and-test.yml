@@ -20,13 +20,16 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore EmployeeLeaveManagementSystem.sln
+        working-directory: ./backend/EmployeeLeaveManagementSystem.API
+        run: dotnet restore employee-leave-management-system-api.slnx
 
       - name: Build solution
-        run: dotnet build EmployeeLeaveManagementSystem.sln --no-restore --configuration Release
+        working-directory: ./backend/EmployeeLeaveManagementSystem.API
+        run: dotnet build employee-leave-management-system-api.slnx --no-restore --configuration Release
 
       - name: Execute Unit Tests
-        run: dotnet test EmployeeLeaveManagementSystem.sln --no-build --configuration Release --verbosity normal
+        working-directory: ./backend/EmployeeLeaveManagementSystem.API
+        run: dotnet test employee-leave-management-system-api.slnx --no-build --configuration Release --verbosity normal
 
   frontend-ci:
     name: Frontend Build & Test (Angular)
@@ -45,6 +48,10 @@ jobs:
       - name: Install dependencies
         working-directory: ./frontend
         run: npm ci --legacy-peer-deps
+
+      - name: Run Frontend Tests
+        working-directory: ./frontend
+        run: npm test -- --no-watch
 
       - name: Verify Production AOT Build
         working-directory: ./frontend
