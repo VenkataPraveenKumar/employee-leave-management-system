@@ -1,0 +1,20 @@
+<div class="toast-stack" *ngIf="notificationService.toasts().length > 0">
+  <div
+    *ngFor="let toast of notificationService.toasts()"
+    class="toast-item"
+    [ngClass]="toast.type"
+  >
+    <div class="toast-body">
+      <strong class="toast-title">{{ toast.title }}</strong>
+      <span class="toast-message">{{ toast.message }}</span>
+    </div>
+    <button
+      type="button"
+      class="toast-close"
+      (click)="notificationService.dismiss(toast.id)"
+      aria-label="Dismiss alert"
+    >
+      &times;
+    </button>
+  </div>
+</div>
