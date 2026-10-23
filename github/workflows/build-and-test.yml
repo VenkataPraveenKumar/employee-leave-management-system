@@ -1,0 +1,51 @@
+name: Build & Test CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-ci:
+    name: Backend Build & Test (.NET)
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore EmployeeLeaveManagementSystem.sln
+
+      - name: Build solution
+        run: dotnet build EmployeeLeaveManagementSystem.sln --no-restore --configuration Release
+
+      - name: Execute Unit Tests
+        run: dotnet test EmployeeLeaveManagementSystem.sln --no-build --configuration Release --verbosity normal
+
+  frontend-ci:
+    name: Frontend Build & Test (Angular)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Verify Production AOT Build
+        working-directory: ./frontend
+        run: npm run build
