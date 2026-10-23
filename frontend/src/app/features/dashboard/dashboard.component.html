@@ -1,0 +1,70 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1>Welcome back, {{ authService.currentUser()?.fullName }}</h1>
+      <p>Here is an overview of your annual leave allocations and recent activity.</p>
+    </div>
+    <a routerLink="/leaves/apply" class="btn-primary">+ Request Time Off</a>
+  </div>
+
+  <div *ngIf="errorMessage()" class="alert-error">
+    {{ errorMessage() }}
+  </div>
+
+  <div *ngIf="isLoading()" class="loading-state">
+    <p>Loading your leave overview...</p>
+  </div>
+
+  <div *ngIf="!isLoading()">
+    <!-- Balance Metric Cards -->
+    <section class="balances-grid">
+      <div *ngFor="let item of balances()" class="balance-card">
+        <div class="card-type">{{ item.leaveType }} Leave</div>
+        <div class="card-metric">{{ item.remainingDays }} <span>days left</span></div>
+        <div class="card-footer">
+          <span>Used: {{ item.usedDays }}</span>
+          <span>Allocated: {{ item.totalDays }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity Table -->
+    <section class="activity-section">
+      <div class="section-header">
+        <h2>Recent Leave Requests</h2>
+        <a routerLink="/leaves/history" class="link-view-all">View Complete History &rarr;</a>
+      </div>
+
+      <div *ngIf="recentRequests().length === 0" class="empty-state">
+        <p>No leave requests found. Ready to take some time off?</p>
+      </div>
+
+      <div *ngIf="recentRequests().length > 0" class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Period</th>
+              <th>Days</th>
+              <th>Status</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of recentRequests()">
+              <td class="font-bold">{{ req.leaveType }}</td>
+              <td>{{ req.startDate }} to {{ req.endDate }}</td>
+              <td>{{ req.totalDays }}</td>
+              <td>
+                <span class="badge" [ngClass]="req.status.toLowerCase()">
+                  {{ req.status }}
+                </span>
+              </td>
+              <td>{{ req.createdAtUtc | date:'mediumDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

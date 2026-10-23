@@ -14,6 +14,18 @@ using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularClientPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Controllers & Swagger
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
@@ -132,6 +144,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors("AngularClientPolicy");
 
 // Auth Middleware (Order matters!)
 app.UseAuthentication();

@@ -1,0 +1,127 @@
+<div class="approvals-container">
+  <div class="page-header">
+    <div>
+      <h1>Manager Review Portal</h1>
+      <p>Evaluate pending employee leave applications and take approval actions.</p>
+    </div>
+    <button type="button" class="btn-refresh" (click)="loadPendingApprovals()" [disabled]="isLoading()">
+      Refresh List
+    </button>
+  </div>
+
+  <!-- Notification Banners -->
+  <div *ngIf="successMessage()" class="alert-success">
+    {{ successMessage() }}
+  </div>
+
+  <div *ngIf="errorMessage()" class="alert-error">
+    {{ errorMessage() }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <p>Loading pending leave applications...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading()">
+    <div *ngIf="pendingRequests().length === 0" class="empty-state">
+      <div class="empty-badge">&#10003;</div>
+      <h3>All Caught Up</h3>
+      <p>There are no leave applications currently pending your review.</p>
+    </div>
+
+    <div *ngIf="pendingRequests().length > 0" class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Period</th>
+            <th>Working Days</th>
+            <th>Employee Reason</th>
+            <th>Submitted On</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let req of pendingRequests()">
+            <td>#{{ req.id }}</td>
+            <td class="font-bold">{{ req.leaveType }}</td>
+            <td>{{ req.startDate }} &rarr; {{ req.endDate }}</td>
+            <td>{{ req.totalDays }} day(s)</td>
+            <td class="cell-reason" [title]="req.reason">{{ req.reason }}</td>
+            <td>{{ req.createdAtUtc | date:'mediumDate' }}</td>
+            <td class="actions-cell">
+              <button
+                type="button"
+                class="btn-approve"
+                (click)="openReviewModal(req, true)"
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                class="btn-reject"
+                (click)="openReviewModal(req, false)"
+              >
+                Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Review Confirmation Modal -->
+  <div class="modal-backdrop" *ngIf="selectedRequest">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>{{ isApprovalAction ? 'Approve Leave Request' : 'Reject Leave Request' }}</h3>
+        <p>Application #{{ selectedRequest.id }} ({{ selectedRequest.leaveType }})</p>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-summary">
+          <strong>Duration:</strong> {{ selectedRequest.startDate }} to {{ selectedRequest.endDate }} ({{ selectedRequest.totalDays }} days)
+        </p>
+        <p class="modal-reason">
+          <strong>Employee Reason:</strong> "{{ selectedRequest.reason }}"
+        </p>
+
+        <div class="form-group">
+          <label for="reviewComment">
+            Reviewer Remarks {{ isApprovalAction ? '(Optional)' : '(Required for audit log)' }}
+          </label>
+          <textarea
+            id="reviewComment"
+            rows="3"
+            [(ngModel)]="reviewComment"
+            placeholder="Add review feedback or reason for decision..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn-cancel"
+          (click)="closeReviewModal()"
+          [disabled]="isProcessing()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          [class]="isApprovalAction ? 'btn-confirm-approve' : 'btn-confirm-reject'"
+          (click)="submitReview()"
+          [disabled]="isProcessing()"
+        >
+          <span *ngIf="!isProcessing()">Confirm {{ isApprovalAction ? 'Approval' : 'Rejection' }}</span>
+          <span *ngIf="isProcessing()">Processing...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

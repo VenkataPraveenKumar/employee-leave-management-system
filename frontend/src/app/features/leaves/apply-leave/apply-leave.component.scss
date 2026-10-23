@@ -1,0 +1,153 @@
+.apply-leave-container {
+  max-width: 680px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+}
+
+.form-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.balance-ribbon {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background-color: #f8fafc;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+
+  .ribbon-item {
+    font-size: 0.85rem;
+
+    .ribbon-type {
+      color: #64748b;
+      margin-right: 0.25rem;
+    }
+
+    .ribbon-days {
+      font-weight: 600;
+      color: #0f172a;
+    }
+  }
+}
+
+.leave-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    &.invalid {
+      border-color: #ef4444;
+    }
+  }
+}
+
+.field-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+
+  button {
+    padding: 0.65rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-cancel {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+
+    &:hover {
+      background: #e2e8f0;
+    }
+  }
+
+  .btn-submit {
+    background: #2563eb;
+    border: none;
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+
+    &:disabled {
+      background: #93c5fd;
+      cursor: not-allowed;
+    }
+  }
+}

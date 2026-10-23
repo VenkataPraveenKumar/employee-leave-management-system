@@ -1,0 +1,20 @@
+<header class="navbar" *ngIf="authService.isAuthenticated()">
+  <div class="nav-brand">
+    <span class="brand-title">ELMS Portal</span>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/leaves/apply" routerLinkActive="active">Apply Leave</a>
+    <a routerLink="/leaves/history" routerLinkActive="active">My Requests</a>
+    <a *ngIf="authService.isManager()" routerLink="/approvals" routerLinkActive="active">Pending Approvals</a>
+  </nav>
+
+  <div class="nav-user">
+    <div class="user-meta">
+      <span class="user-name">{{ authService.currentUser()?.fullName }}</span>
+      <span class="user-role">{{ authService.currentUser()?.role }}</span>
+    </div>
+    <button type="button" class="btn-logout" (click)="authService.logout()">Sign Out</button>
+  </div>
+</header>
