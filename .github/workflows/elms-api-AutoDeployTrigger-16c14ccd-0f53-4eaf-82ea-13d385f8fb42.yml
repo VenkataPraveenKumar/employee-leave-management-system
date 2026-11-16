@@ -1,28 +1,26 @@
 name: Trigger auto deployment for elms-api
 
-# When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ main ]
+    branches:
+      - main
     paths:
-    - '**'
-    - '.github/workflows/elms-api-AutoDeployTrigger-16c14ccd-0f53-4eaf-82ea-13d385f8fb42.yml'
+      - 'backend/**'
+      - '.github/workflows/elms-api-AutoDeployTrigger-16c14ccd-0f53-4eaf-82ea-13d385f8fb42.yml'
 
-  # Allow manual trigger 
-  workflow_dispatch:      
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions: 
-      id-token: write #This is required for requesting the OIDC JWT Token
-      contents: read #Required when GH token is used to authenticate with private repo
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout to the branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Azure Login
         uses: azure/login@v2
@@ -35,15 +33,10 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}/backend
-          _dockerfilePathKey_: _dockerfilePath_
-          _targetLabelKey_: _targetLabel_
+          dockerfilePath: ./Dockerfile
           registryUrl: ghcr.io
           registryUsername: ${{ secrets.ELMSAPI_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.ELMSAPI_REGISTRY_PASSWORD }}
           containerAppName: elms-api
           resourceGroup: rg-elms-prod
-          imageToBuild: ghcr.io/elms-api:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
-
-
+          imageToBuild: ghcr.io/venkatapraveenkumar/elms-api:${{ github.sha }}
