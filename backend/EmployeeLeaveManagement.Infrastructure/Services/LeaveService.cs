@@ -52,7 +52,24 @@ public class LeaveService : ILeaveService
         var requests = await _unitOfWork.Repository<LeaveRequest>()
             .FindAsync(r => r.UserId == userId);
 
-        return requests
+        var requestList = requests.ToList();
+        if (!requestList.Any())
+        {
+            return Array.Empty<LeaveRequestResponseDto>();
+        }
+
+        var requestIds = requestList.Select(r => r.Id).ToHashSet();
+        var approvals = await _unitOfWork.Repository<Approval>()
+            .FindAsync(a => requestIds.Contains(a.LeaveRequestId));
+
+        var approvalCommentMap = approvals
+            .GroupBy(a => a.LeaveRequestId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderByDescending(a => a.DecidedAtUtc).First().Comments
+            );
+
+        return requestList
             .OrderByDescending(r => r.CreatedAtUtc)
             .Select(r => new LeaveRequestResponseDto(
                 r.Id,
@@ -62,7 +79,8 @@ public class LeaveService : ILeaveService
                 r.TotalDays,
                 r.Reason,
                 r.Status.ToString(),
-                r.CreatedAtUtc
+                r.CreatedAtUtc,
+                approvalCommentMap.GetValueOrDefault(r.Id)
             )).ToList();
     }
 

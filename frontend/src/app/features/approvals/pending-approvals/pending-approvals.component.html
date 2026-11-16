@@ -35,7 +35,8 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Emp ID</th>
+            <th>Name</th>
             <th>Type</th>
             <th>Period</th>
             <th>Working Days</th>
@@ -46,7 +47,8 @@
         </thead>
         <tbody>
           <tr *ngFor="let req of pendingRequests()">
-            <td>#{{ req.id }}</td>
+            <td>{{ req.employeeId }}</td>
+            <td>{{ req.employeeName }}</td>
             <td class="font-bold">{{ req.leaveType }}</td>
             <td>{{ req.startDate }} &rarr; {{ req.endDate }}</td>
             <td>{{ req.totalDays }} day(s)</td>

@@ -56,6 +56,10 @@ export interface CreateLeaveRequest {
 export interface LeaveRequestSummary {
   /** Unique identifier of the leave request. */
   id: number;
+  /** Unique identifier of the employee who submitted the request. */
+  employeeId: number;
+  /** Full name of the employee who submitted the request. */
+  employeeName: string;
   /** The leave category name. */
   leaveType: string;
   /** Starting date of the leave period. */
@@ -70,4 +74,6 @@ export interface LeaveRequestSummary {
   status: string;
   /** UTC timestamp when the request was submitted. */
   createdAtUtc: string;
+  /** Comments or feedback provided by the approver. */
+  approverComments?: string | null;
 }

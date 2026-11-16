@@ -31,6 +31,7 @@
             <th>Working Days</th>
             <th>Reason</th>
             <th>Status</th>
+            <th>Manager Comments</th>
             <th>Submission Date</th>
           </tr>
         </thead>
@@ -46,6 +47,13 @@
               <span class="badge" [ngClass]="req.status.toLowerCase()">
                 {{ req.status }}
               </span>
+            </td>
+            <td>
+              @if (req.approverComments) {
+              <span>{{ req.approverComments }}</span>
+              } @else {
+              <span class="text-muted">—</span>
+              }
             </td>
             <td>{{ req.createdAtUtc | date:'medium' }}</td>
           </tr>

@@ -26,7 +26,8 @@ public record LeaveRequestResponseDto(
     int TotalDays,
     string Reason,
     string Status,
-    DateTime CreatedAtUtc
+    DateTime CreatedAtUtc,
+    string? ApproverComments = null
 );
 
 /// <summary>

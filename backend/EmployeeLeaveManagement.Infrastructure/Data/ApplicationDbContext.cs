@@ -59,6 +59,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(lr => lr.LeaveType).HasConversion<string>().HasMaxLength(20);
             entity.Property(lr => lr.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(lr => lr.Reason).HasMaxLength(500).IsRequired();
+            entity.Property(lr => lr.ApproverComments).HasMaxLength(500);
+            entity.Property(lr => lr.ApprovedById);
+            entity.Property(lr => lr.ActionedOn);
 
             entity.HasOne(lr => lr.User)
                   .WithMany(u => u.LeaveRequests)

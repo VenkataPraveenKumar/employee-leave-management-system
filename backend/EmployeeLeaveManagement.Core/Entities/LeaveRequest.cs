@@ -14,6 +14,8 @@ public class LeaveRequest
     public string Reason { get; set; } = string.Empty;
     public LeaveStatus Status { get; set; } = LeaveStatus.Pending;
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
-
     public Approval? Approval { get; set; }
+    public string? ApproverComments { get; set; }
+    public int? ApprovedById { get; set; }
+    public DateTime? ActionedOn { get; set; }
 }
