@@ -15,14 +15,16 @@ using FluentValidation.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS Configuration
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? new[] { "http://localhost:4200" };
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AngularClientPolicy", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
@@ -148,7 +150,7 @@ app.UseHttpsRedirection();
 // Enable CORS
 app.UseCors("AngularClientPolicy");
 
-// Auth Middleware (Order matters!)
+// Auth Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
