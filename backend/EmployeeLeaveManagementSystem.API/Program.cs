@@ -18,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? new[] { "http://localhost:4200" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -125,6 +126,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
         await DatabaseSeeder.SeedAsync(context);
     }
     catch (Exception ex)
@@ -133,6 +135,9 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+
+// Enable CORS
+app.UseCors("AllowFrontend");
 
 // Development Swagger UI
 if (app.Environment.IsDevelopment())
@@ -143,12 +148,8 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Leave Management System API v1");
         options.RoutePrefix = string.Empty; // Serve Swagger UI at root
     });
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
-
-// Enable CORS
-app.UseCors("AngularClientPolicy");
 
 // Auth Middleware
 app.UseAuthentication();
